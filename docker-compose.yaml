@@ -1,0 +1,53 @@
+version: "3.9"
+services:
+  driverlocation:
+    image: driverlocation
+    container_name: driverlocation
+    restart: always
+    build:
+      context: .
+      dockerfile: ./internal/driverlocation/Dockerfile
+    ports:
+      - 3000:3001
+    environment:
+      - MONGO_DSN=mongodb://mongo:27017/
+      - DRIVER_LOCATION_DATABASE=driver_location
+      - DRIVER_LOCATION_COLLECTION=driver_location
+      - REPOSITORY=mongo
+      - SERVER=http
+      - SERVICE=driverlocation
+      - PORT=:3001
+      - MIGRATE=true
+    volumes:
+      - ./internal/driverlocation:/app/internal/driverlocation
+      - ./pkg:/app/pkg
+  
+  matching:
+    image: matching
+    container_name: matching
+    restart: always
+    build:
+      context: .
+      dockerfile: ./internal/matching/Dockerfile
+    ports:
+      - 3001:3001
+    environment:
+      - SERVER=http
+      - SERVICE=matching
+      - PORT=:3001
+    volumes:
+      - ./internal/matching:/app/internal/matching
+      - ./pkg:/app/pkg
+
+  mongo:
+    image: mongo:4.4.4
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: driver_location
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+volumes:
+  mongo_data: null
