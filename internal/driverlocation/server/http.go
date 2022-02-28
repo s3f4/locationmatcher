@@ -114,9 +114,9 @@ func (h *httpServer) Find(w http.ResponseWriter, r *http.Request) {
 	apihelper.SendResponse(w, http.StatusOK,
 		apihelper.Response{
 			Code: 200,
-			Data: map[string]interface{}{
-				"total":     len(locations),
-				"locations": locations,
+			Data: models.LocationsResponse{
+				Total:     len(locations),
+				Locations: locations,
 			},
 		},
 	)

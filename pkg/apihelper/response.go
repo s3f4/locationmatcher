@@ -40,8 +40,8 @@ func Send401(w http.ResponseWriter) {
 	SendResponse(
 		w,
 		Err400.Code, Response{
-			Code: Err400.Code,
-			Msg:  Err400.Error(),
+			Code: Err401.Code,
+			Msg:  Err401.Error(),
 		})
 }
 
