@@ -2,8 +2,8 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -14,50 +14,59 @@ import (
 )
 
 type APIClient interface {
-	FindNearest(url string, query *models.Query) (*apihelper.Response, error)
+	FindNearest(context.Context, string, *models.Query) (*apihelper.Response, error)
 }
 
-type apiClient struct {
+type httpClient struct {
 	client *http.Client
 }
 
-var client *apiClient
+var client *httpClient
+var circuit Circuit
 
-func GetAPIClient() APIClient {
+func NewAPIClient() APIClient {
 	if client == nil {
-		client = new(apiClient)
+		client = new(httpClient)
 		client.client = &http.Client{
 			Timeout: time.Second * 15,
 		}
+
+		circuit = Breaker(func(ctx context.Context, url string, reader io.Reader) (*http.Response, error) {
+			req, err := http.NewRequest("POST", url, reader)
+			if err != nil {
+				return nil, err
+			}
+
+			req = req.WithContext(ctx)
+			req.Header.Set("X-USER-AUTHENTICATED", "true")
+
+			resp, err := client.client.Do(req)
+			if err != nil {
+				return nil, err
+			}
+
+			return resp, nil
+		}, 5)
 	}
 
 	return client
 }
 
-func (a *apiClient) FindNearest(url string, query *models.Query) (*apihelper.Response, error) {
-	client := a.client
-
+func (a *httpClient) FindNearest(ctx context.Context, url string, query *models.Query) (*apihelper.Response, error) {
 	newReq, err := json.Marshal(query)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", url, io.NopCloser(bytes.NewReader(newReq)))
+	reader := io.NopCloser(bytes.NewReader(newReq))
+	resp, err := circuit(ctx, url, reader)
 	if err != nil {
-		log.Error(err)
+		// log.Error(err)
 		return nil, err
 	}
-
-	req.Header.Set("X-REQUEST-FROM", "matching")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Printf("Error %s", err)
-		return nil, err
-	}
-
 	defer resp.Body.Close()
+
 	var response apihelper.Response
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return nil, err

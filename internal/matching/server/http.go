@@ -7,13 +7,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/s3f4/locationmatcher/internal/matching/client"
-	"github.com/s3f4/locationmatcher/internal/matching/middlewares"
 	"github.com/s3f4/locationmatcher/internal/matching/models"
+	"github.com/s3f4/locationmatcher/internal/matching/server/middlewares"
 	"github.com/s3f4/locationmatcher/pkg/apihelper"
 	"github.com/s3f4/locationmatcher/pkg/log"
 )
 
 type httpServer struct {
+	client client.APIClient
 }
 
 func (h *httpServer) Start(ctx context.Context) {
@@ -47,20 +48,24 @@ func (h *httpServer) Start(ctx context.Context) {
 }
 
 func (h *httpServer) FindNearest(w http.ResponseWriter, r *http.Request) {
+	context := r.Context()
 	var query models.Query
 	if err := apihelper.ParseAndValidate(r, &query); err != nil {
-		log.Error(err)
-		apihelper.Send400(w)
+		apihelper.SendResponse(w, err.Code, apihelper.Response{
+			Code: err.Code,
+			Msg:  err.Msg,
+		})
 		return
 	}
 
-	response, err := client.GetAPIClient().FindNearest("http://driverlocation:3001/api/v1/driver_locations/find_nearest", &query)
+	response, err := h.client.FindNearest(context, "http://driverlocation:3001/api/v1/driver_locations/find_nearest", &query)
 	if err != nil {
 		log.Error(err)
 		apihelper.Send500(w)
 		return
 	}
 
+	log.Info(response.Data)
 	if response.Code == http.StatusNotFound {
 		apihelper.Send404(w)
 		return

@@ -17,7 +17,7 @@ services:
       - SERVER=http
       - SERVICE=driverlocation
       - PORT=:3001
-      - MIGRATE=true
+      - MIGRATE=false
     volumes:
       - ./internal/driverlocation:/app/internal/driverlocation
       - ./pkg:/app/pkg

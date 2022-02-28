@@ -28,21 +28,23 @@ type testParams struct {
 
 var FindDataParam = []testParams{
 	{"find_nearest_param_no_param", http.MethodPost, "/api/v1/driver_location/find_nearest", ``, 400, `{"code":400,"msg":"Bad Request"}`},
-	{"find_nearest_param_latitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":191,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid latitude"}`},
-	{"find_nearest_param_longitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":94,"longitude":99,"minDistance": 0,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid longitude"}`},
-	{"find_nearest_param_maxDistance", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":94,"longitude":55,"minDistance": 0,"maxDistance": 0}`, 400, `{"code":400,"msg":"maxDistance must be greater then 0 and minDistance"}`},
+	{"find_nearest_param_invalid_geojson", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":191,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid GeoJSON type"}`},
+	{"find_nearest_param_invalid_type", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Poin","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid GeoJSON type"}`},
+	{"find_nearest_param_invalid_latitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [181,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid latitude"}`},
+	{"find_nearest_param_invalid_longitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,-91]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid longitude"}`},
+	{"find_nearest_param_maxDistance", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 0}`, 400, `{"code":400,"msg":"maxDistance must be greater then 0 and minDistance"}`},
 }
 
 var FindData = []testParams{
-	{"find_nearest_success_error", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":90,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 500, `{"code":500,"msg":"Internal Server Error"}`},
+	{"find_nearest_success_error", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 500, `{"code":500,"msg":"Internal Server Error"}`},
 }
 
 var FindDataNotFound = []testParams{
-	{"find_nearest_success_not_found", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":90,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 404, `{"code":404,"msg":"Not Found"}`},
+	{"find_nearest_success_not_found", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 404, `{"code":404,"msg":"Not Found"}`},
 }
 
 var FindDataSuccess = []testParams{
-	{"find_nearest_success_success", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":90,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 200, `{"code":200,"data":{"locations":[{"_id":"000000000000000000000000","location":{"type":"","coordinates":null},"distance":0,"mongo_distance":0}],"total":1}}`},
+	{"find_nearest_success_success", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 200, `{"code":200,"data":{"total":1,"locations":[{"_id":"000000000000000000000000","location":{"type":"","coordinates":null},"distance":0}]}}`},
 }
 
 var UpsertBulkParams = []testParams{
@@ -54,7 +56,7 @@ var UpsertBulkParams = []testParams{
 }
 
 var UpsertBulkValues = []testParams{
-	{"driver_location_valid_request", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]}}]`, 200, `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]},"distance":0,"mongo_distance":0}]`},
+	{"driver_location_valid_request", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]}}]`, 200, `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]},"distance":0}]`},
 }
 
 var UpsertBulkErr = []testParams{
@@ -89,9 +91,9 @@ func Test_Find(t *testing.T) {
 	driverLocationRepository.On("Find", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
-			Coordinates: []interface{}{10.0, 10.0},
+			Coordinates: []interface{}{41.90513187, 29.15188821},
 		},
-		MinDistance: 0,
+		MinDistance: 55,
 		MaxDistance: 10000,
 	}).Return(nil, errors.New("error"))
 
@@ -120,9 +122,9 @@ func Test_Find_NotFound(t *testing.T) {
 	driverLocationRepository.On("Find", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
-			Coordinates: []interface{}{10.0, 10.0},
+			Coordinates: []interface{}{41.90513187, 29.15188821},
 		},
-		MinDistance: 0,
+		MinDistance: 55,
 		MaxDistance: 10000,
 	}).Return([]*models.DriverLocation{}, nil)
 
@@ -150,9 +152,9 @@ func Test_Find_Success(t *testing.T) {
 	driverLocationRepository.On("Find", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
-			Coordinates: []interface{}{10.0, 10.0},
+			Coordinates: []interface{}{41.90513187, 29.15188821},
 		},
-		MinDistance: 0,
+		MinDistance: 55,
 		MaxDistance: 10000,
 	}).Return([]*models.DriverLocation{{Location: models.Location{}}}, nil)
 

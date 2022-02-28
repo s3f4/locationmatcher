@@ -5,6 +5,8 @@ package mocks
 import (
 	apihelper "github.com/s3f4/locationmatcher/pkg/apihelper"
 
+	context "context"
+
 	mock "github.com/stretchr/testify/mock"
 
 	models "github.com/s3f4/locationmatcher/internal/matching/models"
@@ -15,13 +17,13 @@ type APIClient struct {
 	mock.Mock
 }
 
-// FindNearest provides a mock function with given fields: url, query
-func (_m *APIClient) FindNearest(url string, query *models.Query) (*apihelper.Response, error) {
-	ret := _m.Called(url, query)
+// FindNearest provides a mock function with given fields: _a0, _a1, _a2
+func (_m *APIClient) FindNearest(_a0 context.Context, _a1 string, _a2 *models.Query) (*apihelper.Response, error) {
+	ret := _m.Called(_a0, _a1, _a2)
 
 	var r0 *apihelper.Response
-	if rf, ok := ret.Get(0).(func(string, *models.Query) *apihelper.Response); ok {
-		r0 = rf(url, query)
+	if rf, ok := ret.Get(0).(func(context.Context, string, *models.Query) *apihelper.Response); ok {
+		r0 = rf(_a0, _a1, _a2)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*apihelper.Response)
@@ -29,8 +31,8 @@ func (_m *APIClient) FindNearest(url string, query *models.Query) (*apihelper.Re
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *models.Query) error); ok {
-		r1 = rf(url, query)
+	if rf, ok := ret.Get(1).(func(context.Context, string, *models.Query) error); ok {
+		r1 = rf(_a0, _a1, _a2)
 	} else {
 		r1 = ret.Error(1)
 	}

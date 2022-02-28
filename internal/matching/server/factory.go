@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
+
+	"github.com/s3f4/locationmatcher/internal/matching/client"
 )
 
 type Server interface {
@@ -12,7 +14,9 @@ type Server interface {
 func NewServer(server string) (Server, error) {
 	switch server {
 	case "http":
-		return &httpServer{}, nil
+		return &httpServer{
+			client: client.NewAPIClient(),
+		}, nil
 
 	case "grpc":
 		return &grpcServer{}, nil

@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/models"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/repository"
+	"github.com/s3f4/locationmatcher/internal/driverlocation/server/middlewares"
 	"github.com/s3f4/locationmatcher/pkg/apihelper"
 	"github.com/s3f4/locationmatcher/pkg/log"
 )
@@ -26,6 +27,7 @@ func (h *httpServer) Start(ctx context.Context, repository repository.Repository
 	var router *chi.Mux = chi.NewRouter()
 
 	router.Route("/api/v1/driver_locations", func(router chi.Router) {
+		router.Use(middlewares.AuthCtx)
 		router.Post("/", h.UpsertBulk)
 		router.Post("/find_nearest", h.Find)
 	})

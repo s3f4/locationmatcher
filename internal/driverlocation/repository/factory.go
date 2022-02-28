@@ -18,7 +18,7 @@ func NewRepository(repository string, client interface{}) (Repository, error) {
 		if !ok {
 			return nil, ErrClientType
 		}
-		return NewMongoRepository(mongoClient), nil
+		return &mongoRepository{client: mongoClient}, nil
 
 	case elasticKey:
 		return &elasticRepository{}, nil

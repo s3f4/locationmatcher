@@ -24,12 +24,6 @@ type mongoRepository struct {
 	client *mongo.Client
 }
 
-// NewMongoRepository returns an DriverLocationRepository object
-func NewMongoRepository(client *mongo.Client) Repository {
-	return &mongoRepository{
-		client,
-	}
-}
 
 func (r *mongoRepository) getCollection() *mongo.Collection {
 	return r.client.Database(DB).Collection(locationCollection)
