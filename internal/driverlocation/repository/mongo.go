@@ -24,7 +24,6 @@ type mongoRepository struct {
 	client *mongo.Client
 }
 
-
 func (r *mongoRepository) getCollection() *mongo.Collection {
 	return r.client.Database(DB).Collection(locationCollection)
 }
@@ -53,7 +52,6 @@ func (r *mongoRepository) Find(ctx context.Context, query *models.Query) ([]*mod
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		log.Error(err)
 		return nil, err
 	}
 
@@ -70,7 +68,6 @@ func (r *mongoRepository) Find(ctx context.Context, query *models.Query) ([]*mod
 			coords[1].(float64),
 		)
 		if err != nil {
-			log.Error("Could not calculate the distance")
 			return nil, err
 		}
 		driverLocations = append(driverLocations, &driverLocation)
@@ -96,7 +93,6 @@ func (r *mongoRepository) Find1(ctx context.Context, query *models.Query) ([]*mo
 
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
-		log.Error(err)
 		return nil, err
 	}
 
@@ -116,7 +112,6 @@ func (r *mongoRepository) Find1(ctx context.Context, query *models.Query) ([]*mo
 			coords[1].(float64),
 		)
 		if err != nil {
-			log.Error("Could not calculate the distance")
 			return nil, err
 		}
 
@@ -156,7 +151,6 @@ func (r *mongoRepository) UpsertBulk(ctx context.Context, driverLocations []*mod
 	opts := options.BulkWrite().SetOrdered(false)
 	res, err := collection.BulkWrite(ctx, models, opts)
 	log.Infof("%#v\n", res)
-	log.Info(err)
 	return err
 }
 

@@ -68,7 +68,7 @@ func Test_Find(t *testing.T) {
 	for _, data := range FindData {
 		t.Run(data.name, func(t *testing.T) {
 			client := new(mocks.APIClient)
-			client.On("FindNearest", mock.Anything, mock.Anything).Return(nil, fmt.Errorf("err"))
+			client.On("FindNearest", mock.Anything, mock.Anything, mock.Anything).Return(nil, fmt.Errorf("err"))
 			server := &httpServer{client: client}
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(data.method, data.url, strings.NewReader(data.body))
@@ -90,7 +90,7 @@ func Test_Find_NotFound(t *testing.T) {
 	for _, data := range FindDataNotFound {
 		t.Run(data.name, func(t *testing.T) {
 			client := new(mocks.APIClient)
-			client.On("FindNearest", mock.Anything, mock.Anything).Return(&apihelper.Response{Code: 404, Msg: "Not Found"}, nil)
+			client.On("FindNearest", mock.Anything, mock.Anything, mock.Anything).Return(&apihelper.Response{Code: 404, Msg: "Not Found"}, nil)
 			server := &httpServer{client: client}
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(data.method, data.url, strings.NewReader(data.body))

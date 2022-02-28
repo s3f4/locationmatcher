@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/models"
@@ -18,6 +19,7 @@ type httpServer struct {
 	repository repository.Repository
 }
 
+// Start starts http server
 func (h *httpServer) Start(ctx context.Context, repository repository.Repository) {
 	service := os.Getenv("SERVICE")
 	port := os.Getenv("PORT")
@@ -37,8 +39,11 @@ func (h *httpServer) Start(ctx context.Context, repository repository.Repository
 	}))
 
 	server := &http.Server{
-		Handler: router,
-		Addr:    port,
+		Handler:      router,
+		Addr:         port,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	go func() {
@@ -49,9 +54,10 @@ func (h *httpServer) Start(ctx context.Context, repository repository.Repository
 
 	log.Infof("%s HTTP server started on port %s...\n", service, port)
 	<-ctx.Done()
+	log.Infof("%s HTTP server stopped. \n", service)
 }
 
-// UpsertBulk the http method of driverLocation
+// UpsertBulk is used to create or/and update driver locations.
 func (h *httpServer) UpsertBulk(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var driverLocations []*models.DriverLocation
@@ -80,6 +86,7 @@ func (h *httpServer) UpsertBulk(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.repository.UpsertBulk(ctx, driverLocations); err != nil {
+		log.Error(err)
 		apihelper.Send500(w)
 		return
 	}
@@ -87,6 +94,7 @@ func (h *httpServer) UpsertBulk(w http.ResponseWriter, r *http.Request) {
 	apihelper.SendResponse(w, http.StatusOK, driverLocations)
 }
 
+// Find returns nearest locations within the given query parameters
 func (h *httpServer) Find(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var query models.Query

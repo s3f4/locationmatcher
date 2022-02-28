@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/s3f4/locationmatcher/internal/matching/client"
@@ -33,8 +34,11 @@ func (h *httpServer) Start(ctx context.Context) {
 	}))
 
 	server := &http.Server{
-		Handler: router,
-		Addr:    port,
+		Handler:      router,
+		Addr:         port,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	go func() {
@@ -45,6 +49,7 @@ func (h *httpServer) Start(ctx context.Context) {
 
 	log.Infof("%s HTTP server started on port %s...\n", service, port)
 	<-ctx.Done()
+	log.Infof("%s HTTP server stopped. \n", service)
 }
 
 func (h *httpServer) FindNearest(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +70,6 @@ func (h *httpServer) FindNearest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Info(response.Data)
 	if response.Code == http.StatusNotFound {
 		apihelper.Send404(w)
 		return

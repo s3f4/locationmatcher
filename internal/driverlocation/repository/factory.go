@@ -11,6 +11,8 @@ var (
 	ErrNotImplemented = fmt.Errorf("not implemented")
 )
 
+// NewRepository is a repository factory that creates a repository
+// object with given parameters.
 func NewRepository(repository string, client interface{}) (Repository, error) {
 	switch repository {
 	case mongoKey:
