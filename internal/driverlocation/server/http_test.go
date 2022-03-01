@@ -88,7 +88,7 @@ func Test_Find_Param(t *testing.T) {
 
 func Test_Find(t *testing.T) {
 	driverLocationRepository := new(mocks.Repository)
-	driverLocationRepository.On("Find", context.TODO(), &models.Query{
+	driverLocationRepository.On("Find1", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
 			Coordinates: []interface{}{41.90513187, 29.15188821},
@@ -119,7 +119,7 @@ func Test_Find(t *testing.T) {
 
 func Test_Find_NotFound(t *testing.T) {
 	driverLocationRepository := new(mocks.Repository)
-	driverLocationRepository.On("Find", context.TODO(), &models.Query{
+	driverLocationRepository.On("Find1", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
 			Coordinates: []interface{}{41.90513187, 29.15188821},
@@ -149,7 +149,7 @@ func Test_Find_NotFound(t *testing.T) {
 
 func Test_Find_Success(t *testing.T) {
 	driverLocationRepository := new(mocks.Repository)
-	driverLocationRepository.On("Find", context.TODO(), &models.Query{
+	driverLocationRepository.On("Find1", context.TODO(), &models.Query{
 		Location: models.Location{
 			Type:        "Point",
 			Coordinates: []interface{}{41.90513187, 29.15188821},

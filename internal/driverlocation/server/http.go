@@ -132,9 +132,7 @@ func (h *httpServer) Find(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Debug(query)
-
-	locations, err := h.repository.Find(ctx, &query)
+	locations, err := h.repository.Find1(ctx, &query)
 	if err != nil {
 		log.Error(err)
 		apihelper.Send500(w)

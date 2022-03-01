@@ -64,8 +64,8 @@ func (r *mongoRepository) Find(ctx context.Context, query *models.Query) ([]*mod
 		}
 
 		driverLocation.Distance, err = driverLocation.CalculateDistance(
-			coords[0].(float64),
 			coords[1].(float64),
+			coords[0].(float64),
 		)
 		if err != nil {
 			return nil, err
@@ -107,8 +107,8 @@ func (r *mongoRepository) Find1(ctx context.Context, query *models.Query) ([]*mo
 		driverLocation.MongoDistance = &mDistance
 
 		driverLocation.Distance, err = driverLocation.CalculateDistance(
-			coords[0].(float64),
 			coords[1].(float64),
+			coords[0].(float64),
 		)
 		if err != nil {
 			return nil, err

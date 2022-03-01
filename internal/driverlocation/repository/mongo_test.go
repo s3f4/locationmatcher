@@ -124,7 +124,9 @@ func Test_Mongo(t *testing.T) {
 	assert.Len(t, locations, 2)
 
 	fmt.Printf("%#v\n", *locations[0].MongoDistance)
+	fmt.Printf("%#v\n", locations[0].Distance)
 	fmt.Printf("%#v\n", *locations[1].MongoDistance)
+	fmt.Printf("%#v\n", locations[1].Distance)
 	coords, _ := locations[0].Location.Coordinates.(primitive.A)
 	assert.Equal(t, coords[0], driverLocations[1].Location.Coordinates.([]interface{})[0])
 
