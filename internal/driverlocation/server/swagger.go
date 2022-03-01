@@ -18,7 +18,7 @@ package server
 type Location struct {
 	// example: Point
 	Type string `json:"type"`
-	// example: [41.90513187,29.15188821]
+	// example: [29.15188821,41.90513187]
 	Coordinates [2]float64 `json:"coordinates" example:"Point"`
 }
 

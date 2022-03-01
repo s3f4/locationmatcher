@@ -57,8 +57,8 @@ definitions:
     properties:
       coordinates:
         example:
-        - 41.90513187
         - 29.15188821
+        - 41.90513187
         items:
           format: double
           type: number

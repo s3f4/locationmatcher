@@ -145,8 +145,6 @@ func Test_Mongo(t *testing.T) {
 
 	err = repo.DropIfExists(ctx)
 	assert.Nil(t, err)
-	t.Error()
-
 }
 
 // func Test_MongoRepository_Find(t *testing.T) {
