@@ -29,9 +29,9 @@ type testParams struct {
 var FindDataParam = []testParams{
 	{"find_nearest_param_no_param", http.MethodPost, "/api/v1/driver_location/find_nearest", ``, 400, `{"code":400,"msg":"Bad Request"}`},
 	{"find_nearest_param_invalid_geojson", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"latitude":191,"longitude":55,"minDistance": 0,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid GeoJSON type"}`},
-	{"find_nearest_param_invalid_type", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Poin","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid GeoJSON type"}`},
-	{"find_nearest_param_invalid_latitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [181,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid latitude"}`},
-	{"find_nearest_param_invalid_longitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,-91]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid longitude"}`},
+	{"find_nearest_param_invalid_type", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Poin","coordinates": [29.15188821,41.90513187]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid GeoJSON type"}`},
+	{"find_nearest_param_invalid_longitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [181,29.15188821]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid longitude"}`},
+	{"find_nearest_param_invalid_latitude", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,-91]},"minDistance": 55,"maxDistance": 10000}`, 400, `{"code":400,"msg":"you must provide a valid latitude"}`},
 	{"find_nearest_param_maxDistance", http.MethodPost, "/api/v1/driver_location/find_nearest", `{"location": {"type": "Point","coordinates": [41.90513187,29.15188821]},"minDistance": 55,"maxDistance": 0}`, 400, `{"code":400,"msg":"maxDistance must be greater then 0 and minDistance"}`},
 }
 
@@ -51,7 +51,7 @@ var UpsertBulkParams = []testParams{
 	{"upsertbulk_", http.MethodPost, "/api/v1/driver_location", ``, 400, `{"code":400,"msg":"Bad Request"}`},
 	{"upsertbulk_parse_error", http.MethodPost, "/api/v1/driver_location", `[]`, 400, `{"code":400,"msg":"provide valid driver locations"}`},
 	{"upsertbulk_invalid_latitude", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[-190.94001079,29.00077262]}}]`, 400, `{"code":400,"msg":"provide valid driver locations"}`},
-	{"upsertbulk_invalid_longitude", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,91.00077262]}}]`, 400, `{"code":400,"msg":"provide valid driver locations"}`},
+	{"upsertbulk_invalid_longitude", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,191.00077262]}}]`, 400, `{"code":400,"msg":"provide valid driver locations"}`},
 	// {"driver_location_valid_request", http.MethodPost, "/api/v1/driver_location", `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]}}]`, 200, `[{"_id":"6219f72c61d60d9a30ff2072","location":{"type":"Point","coordinates":[40.94001079,29.00077262]}}]`},
 }
 

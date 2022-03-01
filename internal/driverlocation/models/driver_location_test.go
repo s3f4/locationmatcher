@@ -15,7 +15,7 @@ func Test_CalculateDistance(t *testing.T) {
 	driverLocation := DriverLocation{
 		Location: Location{
 			Type:        "Point",
-			Coordinates: []float64{40.6892, -74.0444},
+			Coordinates: []float64{-74.0444, 40.6892},
 		},
 	}
 
@@ -36,7 +36,7 @@ func Test_CalculateDistance(t *testing.T) {
 	driverLocation = DriverLocation{
 		Location: Location{
 			Type:        "Point",
-			Coordinates: []float64{41.025651081666744, 28.97413088610361},
+			Coordinates: []float64{28.97413088610361, 41.025651081666744},
 		},
 	}
 
@@ -137,16 +137,16 @@ func Test_Validate(t *testing.T) {
 
 	driverLocation.Location.Coordinates.([]float64)[0] = -181.22
 	if err := driverLocation.Validate(); err != nil {
-		if err.Error() != "provide a valid latitude value" {
-			t.Error("Wrong latitude validation message")
+		if err.Error() != "provide a valid longitude value" {
+			t.Error("Wrong longitude validation message")
 		}
 	}
 
 	driverLocation.Location.Coordinates.([]float64)[0] = 0
 	driverLocation.Location.Coordinates.([]float64)[1] = 91
 	if err := driverLocation.Validate(); err != nil {
-		if err.Error() != "provide a valid longitude value" {
-			t.Error("Wrong longitude validation message")
+		if err.Error() != "provide a valid latitude value" {
+			t.Error("Wrong latitude validation message")
 		}
 	}
 

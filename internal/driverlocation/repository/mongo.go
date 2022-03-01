@@ -16,8 +16,8 @@ import (
 var (
 	// DB ...
 	DB = os.Getenv("DRIVER_LOCATION_DATABASE")
-	// location collection
-	locationCollection = os.Getenv("DRIVER_LOCATION_COLLECTION")
+	// Collection ...
+	Collection = os.Getenv("DRIVER_LOCATION_COLLECTION")
 )
 
 type mongoRepository struct {
@@ -25,7 +25,7 @@ type mongoRepository struct {
 }
 
 func (r *mongoRepository) getCollection() *mongo.Collection {
-	return r.client.Database(DB).Collection(locationCollection)
+	return r.client.Database(DB).Collection(Collection)
 }
 
 func (r *mongoRepository) Find(ctx context.Context, query *models.Query) ([]*models.DriverLocation, error) {
@@ -216,7 +216,7 @@ func (r *mongoRepository) Migrate(ctx context.Context) {
 		}
 
 		driverLocation.Location.Type = "Point"
-		driverLocation.Location.Coordinates = [2]float64{latitude, longitude}
+		driverLocation.Location.Coordinates = [2]float64{longitude, latitude}
 		driverLocations = append(driverLocations, driverLocation)
 	}
 

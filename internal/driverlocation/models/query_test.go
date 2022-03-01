@@ -47,7 +47,7 @@ func Test_Query(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "it should return an error if latitude is not float",
+			name: "it should return an error if longitude is not float",
 			query: Query{
 				Location: Location{
 					Type:        "Point",
@@ -59,7 +59,7 @@ func Test_Query(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "it should return an error if latitude is not valid",
+			name: "it should return an error if longitude is not valid",
 			query: Query{
 				Location: Location{
 					Type:        "Point",
@@ -83,7 +83,7 @@ func Test_Query(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "it should return an error if longitude is not valid",
+			name: "it should return an error if latitude is not valid",
 			query: Query{
 				Location: Location{
 					Type:        "Point",

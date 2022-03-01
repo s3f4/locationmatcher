@@ -27,22 +27,22 @@ func (q Query) Validate() error {
 		return ErrInvalidCoordinates
 	}
 
-	latitude, ok := coords[0].(float64)
+	longitude, ok := coords[0].(float64)
 	if !ok {
 		return ErrInvalidCoordinates
 	}
 
-	longitude, ok := coords[1].(float64)
+	latitude, ok := coords[1].(float64)
 	if !ok {
 		return ErrInvalidCoordinates
 	}
 
-	if latitude > 180 || latitude < -180 {
-		return fmt.Errorf("you must provide a valid latitude")
-	}
-
-	if longitude > 90 || longitude < -90 {
+	if longitude > 180 || longitude < -180 {
 		return fmt.Errorf("you must provide a valid longitude")
+	}
+
+	if latitude > 90 || latitude < -90 {
+		return fmt.Errorf("you must provide a valid latitude")
 	}
 
 	if q.MinDistance >= q.MaxDistance {

@@ -34,8 +34,8 @@ func (driverLocation *DriverLocation) CalculateDistance(latitude, longitude floa
 		return 0, fmt.Errorf("driver location coordinate error")
 	}
 
-	dlLat := coordinates[0]
-	dlLng := coordinates[1]
+	dlLat := coordinates[1]
+	dlLng := coordinates[0]
 
 	dLat := toRad(latitude - dlLat)
 	dLng := toRad(longitude - dlLng)
@@ -89,14 +89,14 @@ func (driverLocation *DriverLocation) Validate() error {
 		return err
 	}
 
-	// Check latitude limits
+	// Check longitude limits
 	if coords[0] > 180 || coords[0] < -180 {
-		return fmt.Errorf("provide a valid latitude value")
+		return fmt.Errorf("provide a valid longitude value")
 	}
 
-	// Check longitude limits
+	// Check latitude limits
 	if coords[1] > 90 || coords[1] < -90 {
-		return fmt.Errorf("provide a valid longitude value")
+		return fmt.Errorf("provide a valid latitude value")
 	}
 
 	return nil
