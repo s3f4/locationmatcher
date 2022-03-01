@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/s3f4/locationmatcher/internal/matching/client"
 	"github.com/s3f4/locationmatcher/internal/matching/models"
 	"github.com/s3f4/locationmatcher/internal/matching/server/middlewares"
@@ -28,6 +29,16 @@ func (h *httpServer) Start(ctx context.Context) {
 		router.Use(middlewares.AuthCtx)
 		router.Post("/find_nearest", h.FindNearest)
 	})
+
+	// documentation for developers
+	opts := middleware.SwaggerUIOpts{
+		SpecURL: "/static/swagger.yaml",
+	}
+	sh := middleware.SwaggerUI(opts, nil)
+	router.Handle("/docs", sh)
+
+	fileServer := http.FileServer(http.Dir("./static/"))
+	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apihelper.Send404(w)
@@ -52,6 +63,14 @@ func (h *httpServer) Start(ctx context.Context) {
 	log.Infof("%s HTTP server stopped. \n", service)
 }
 
+// swagger:route POST /find_nearest Find
+// returns nearest locations within the given query parameters
+//
+// security:
+// - Bearer: []
+// responses:
+//  401: ApiError
+//  200: DriverLocation
 func (h *httpServer) FindNearest(w http.ResponseWriter, r *http.Request) {
 	context := r.Context()
 	var query models.Query

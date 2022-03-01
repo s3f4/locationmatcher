@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/models"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/repository"
 	"github.com/s3f4/locationmatcher/internal/driverlocation/server/middlewares"
@@ -34,6 +35,16 @@ func (h *httpServer) Start(ctx context.Context, repository repository.Repository
 		router.Post("/find_nearest", h.Find)
 	})
 
+	// documentation for developers
+	opts := middleware.SwaggerUIOpts{
+		SpecURL: "/static/swagger.yaml",
+	}
+	sh := middleware.SwaggerUI(opts, nil)
+	router.Handle("/docs", sh)
+
+	fileServer := http.FileServer(http.Dir("./static/"))
+	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
+
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apihelper.Send404(w)
 	}))
@@ -57,7 +68,14 @@ func (h *httpServer) Start(ctx context.Context, repository repository.Repository
 	log.Infof("%s HTTP server stopped. \n", service)
 }
 
-// UpsertBulk is used to create or/and update driver locations.
+// swagger:route POST / UpsertBulk
+// Create or update driver locations
+//
+// security:
+// - apiKey: []
+// responses:
+//  401: ApiError
+//  200: Response
 func (h *httpServer) UpsertBulk(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var driverLocations []*models.DriverLocation
@@ -94,7 +112,14 @@ func (h *httpServer) UpsertBulk(w http.ResponseWriter, r *http.Request) {
 	apihelper.SendResponse(w, http.StatusOK, driverLocations)
 }
 
-// Find returns nearest locations within the given query parameters
+// swagger:route POST /find_nearest Find
+// returns nearest locations within the given query parameters
+//
+// security:
+// - apiKey: []
+// responses:
+//  401: ApiError
+//  200: DriverLocations
 func (h *httpServer) Find(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var query models.Query

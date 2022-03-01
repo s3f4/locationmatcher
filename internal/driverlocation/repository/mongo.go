@@ -100,7 +100,6 @@ func (r *mongoRepository) Find1(ctx context.Context, query *models.Query) ([]*mo
 	for cursor.Next(ctx) {
 		var driverLocation models.DriverLocation
 		if err := cursor.Decode(&driverLocation); err != nil {
-			log.Error("Could not decode driver location")
 			return nil, err
 		}
 
@@ -180,7 +179,6 @@ func (r *mongoRepository) CreateIndex(ctx context.Context, key, value string) er
 	}
 
 	if _, err := collection.Indexes().CreateOne(ctx, model); err != nil {
-		log.Error(err)
 		return err
 	}
 	return nil
@@ -222,7 +220,6 @@ func (r *mongoRepository) Migrate(ctx context.Context) {
 		driverLocations = append(driverLocations, driverLocation)
 	}
 
-	log.Info(driverLocations)
 	if err := r.UpsertBulk(ctx, driverLocations); err != nil {
 		log.Fatal(err)
 	}

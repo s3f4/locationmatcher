@@ -1,0 +1,150 @@
+basePath: /api/v1
+definitions:
+  ApiError:
+    properties:
+      Code:
+        description: |-
+          Status Code of the error
+          in: int
+        format: int64
+        type: integer
+      Msg:
+        description: |-
+          Message of the error
+          in: string
+        type: string
+    type: object
+    x-go-package: github.com/s3f4/locationmatcher/internal/matching/server
+  DriverLocation:
+    properties:
+      _id:
+        description: |-
+          Id of the driver location
+          in: string
+        type: string
+        x-go-name: ID
+      distance:
+        description: Distance of the driver location to given coordinates
+        format: double
+        readOnly: true
+        type: number
+        x-go-name: Distance
+      location:
+        $ref: '#/definitions/Location'
+      mongo_distance:
+        description: Distance of the driver location to given coordinates that comes
+          from mongodb
+        format: double
+        readOnly: true
+        type: number
+        x-go-name: MongoDistance
+    type: object
+    x-go-package: github.com/s3f4/locationmatcher/internal/matching/server
+  Location:
+    properties:
+      coordinates:
+        example:
+        - 41.90513187
+        - 29.15188821
+        items:
+          format: double
+          type: number
+        type: array
+        x-go-name: Coordinates
+      type:
+        example: Point
+        type: string
+        x-go-name: Type
+    type: object
+    x-go-package: github.com/s3f4/locationmatcher/internal/matching/server
+  Query:
+    properties:
+      location:
+        $ref: '#/definitions/Location'
+      maxDistance:
+        description: |-
+          Maximum distance in meters
+          in: float64
+        example: 10000
+        format: int64
+        type: integer
+        x-go-name: MaxDistance
+      minDistance:
+        description: |-
+          Minimum distance in meters
+          in: float64
+        format: int64
+        type: integer
+        x-go-name: MinDistance
+    type: object
+    x-go-package: github.com/s3f4/locationmatcher/internal/matching/server
+  Response:
+    properties:
+      code:
+        description: |-
+          Status Code of the error
+          in: int
+        format: int64
+        type: integer
+        x-go-name: Code
+      data:
+        description: |-
+          Message of the error
+          in: string
+        type: string
+        x-go-name: Data
+      msg:
+        description: |-
+          Message of the error
+          in: string
+        type: string
+        x-go-name: Msg
+    type: object
+    x-go-package: github.com/s3f4/locationmatcher/internal/matching/server
+host: localhost:3001
+info:
+  description: The Matching Api
+  version: 0.0.1
+paths:
+  /find_nearest:
+    post:
+      description: returns nearest locations within the given query parameters
+      operationId: Find
+      parameters:
+      - description: 'name: body'
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Query'
+        x-go-name: Body
+      responses:
+        "200":
+          description: DriverLocation
+          schema:
+            $ref: '#/definitions/DriverLocation'
+        "401":
+          $ref: '#/responses/ApiError'
+      security:
+      - Bearer:
+        - '[]'
+produces:
+- application/json
+responses:
+  ApiError:
+    description: ""
+    schema:
+      $ref: '#/definitions/ApiError'
+  Response:
+    description: ""
+    schema:
+      $ref: '#/definitions/Response'
+schemes:
+- http
+- https
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
